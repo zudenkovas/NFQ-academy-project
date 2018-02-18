@@ -16,7 +16,7 @@ var orderclearBtnElement = document.getElementById('ordersbuttonClear');
 var orderlist, ordersearchResult;
 var orderFilterResult = [];
 
-$.getJSON("http://localhost:8080/resources/orders.json", function (data) {
+$.getJSON("./resources/orders.json", function (data) {
     orderlist = data;
     ordersearchResult = data;
     renderOrders(data)
@@ -29,8 +29,7 @@ orderclearBtnElement.addEventListener('click', function (event) {
     renderOrders(orderlist);
 });
 
-orderfilterBtnElement.addEventListener('click', function (event) {
-    event.preventDefault();
+function orderEventHandler(){
 
     var searchNameElementValue = searchNameElement.value;
     var clientEmailElementValue = clientEmailElement.value;
@@ -90,17 +89,53 @@ orderfilterBtnElement.addEventListener('click', function (event) {
 
 
 
+    renderOrders(ordersearchResult);  
+};
 
-
-
-
-    console.log(ordersearchResult)
-    renderOrders(ordersearchResult);
-
+searchNameElement.addEventListener('input', function(event){
+    event.preventDefault();
+    orderEventHandler();
 });
 
+clientEmailElement.addEventListener('input', function(event){
+    event.preventDefault();
+    orderEventHandler();
+});
 
+addressElement.addEventListener('input', function(event){
+    event.preventDefault();
+    orderEventHandler();
+});
 
+orderIdElement.addEventListener('input', function(event){
+    event.preventDefault();
+    orderEventHandler();
+});
+
+newOrdersElement.addEventListener('change', function(event){
+    event.preventDefault();
+    orderEventHandler();
+});
+
+activeOrdersElement.addEventListener('change', function(event){
+    event.preventDefault();
+    orderEventHandler();
+});
+
+completeOrdersElement.addEventListener('change', function(event){
+    event.preventDefault();
+    orderEventHandler();
+});
+
+orderPriceLowElement.addEventListener('input', function(event){
+    event.preventDefault();
+    orderEventHandler();
+});
+
+orderPriceHighElement.addEventListener('input', function(event){
+    event.preventDefault();
+    orderEventHandler();
+});
 
 function renderOrders(orderList) {
     var orderItems = [];
@@ -123,7 +158,7 @@ function renderOrders(orderList) {
         </div>   
     </div>
     <hr>
-`)
+ `)
             } else if (orderList[i].order_status == 'Active') {
                 orderItems.push(`
                 <div class="album row">
@@ -139,9 +174,9 @@ function renderOrders(orderList) {
                 <div class="price">${orderList[i].order_price}</div>
     
     </div>   
-</div>
-<hr>
-`)
+ </div>
+ <hr>
+ `)
             } else if (orderList[i].order_status == 'Complete') {
                 orderItems.push(`
                 <div class="album row">
@@ -157,9 +192,9 @@ function renderOrders(orderList) {
                 <div class="price">${orderList[i].order_price}</div>
 
     </div>   
-</div>
-<hr>
-`)
+ </div>
+ <hr>
+ `)
             };
         };
 
@@ -208,7 +243,7 @@ function renderOrders(orderList) {
     }
 
 
-}
+};
 
 
 

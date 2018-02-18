@@ -11,50 +11,76 @@ var filterBtnElement = document.getElementById('buttonSubmit');
 var clearBtnElement = document.getElementById('buttonClear');
 var productList, searchResult;
 
-$.getJSON("http://localhost:8080/resources/products.json", function (data) {
+$.getJSON("./resources/products.json", function (data) {
     productList = data;
     searchResult = data;
     renderProducts(data)
 });
 
 clearBtnElement.addEventListener('click', function (event) {
-    event.preventDefault();
+    // event.preventDefault();
     document.getElementById('form').reset();
     renderProducts(productList);
 });
 
-filterBtnElement.addEventListener('click', function (event) {
+function eventHandler(){
     event.preventDefault();
 
-    var searchElementValue = searchElement.value;
-    var priceLowElementValue = priceLowElement.value;
-    var priceHighElementValue = priceHighElement.value;
+        var searchElementValue = searchElement.value;
+        var priceLowElementValue = priceLowElement.value;
+        var priceHighElementValue = priceHighElement.value;
+        console.log(searchElementValue);
+        searchResult = productList.filter(function (product) {
+            return product.product_name.toLowerCase().indexOf(searchElementValue.toLowerCase()) > -1;
+        });
+    
+        searchResult = searchResult.filter(function (product) {
+            if (priceHighElementValue && priceLowElementValue) {
+                return priceLowElementValue <= Number(product.price.substr(1)) && Number(priceHighElementValue >= product.price.substr(1));
+            } else if (priceHighElementValue && !priceLowElementValue) {
+                return priceHighElementValue >= Number(product.price.substr(1));
+            } else if (!priceHighElementValue && priceLowElementValue) {
+                return priceLowElementValue <= Number(product.price.substr(1))
+            } else { return searchResult };
+        });
+    
+        searchResult = searchResult.filter(function (product) {
+            if (inStockElement.checked) {
+                return product.in_stock == true;
+            } else if (outOfStockElement.checked) {
+                return product.in_stock == false;
+            } else if (allStockElement.checked) {
+                return searchResult;
+            }
+        });
+        renderProducts(searchResult);
 
-    searchResult = productList.filter(function (product) {
-        return product.product_name.toLowerCase().indexOf(searchElementValue.toLowerCase()) > -1;
-    });
+};
 
-    searchResult = searchResult.filter(function (product) {
-        if (priceHighElementValue && priceLowElementValue) {
-            return priceLowElementValue <= Number(product.price.substr(1)) && Number(priceHighElementValue >= product.price.substr(1));
-        } else if (priceHighElementValue && !priceLowElementValue) {
-            return priceHighElementValue >= Number(product.price.substr(1));
-        } else if (!priceHighElementValue && priceLowElementValue) {
-            return priceLowElementValue <= Number(product.price.substr(1))
-        } else { return searchResult };
-    });
-
-    searchResult = searchResult.filter(function (product) {
-        if (inStockElement.checked) {
-            return product.in_stock == true;
-        } else if (outOfStockElement.checked) {
-            return product.in_stock == false;
-        } else if (allStockElement.checked) {
-            return searchResult;
-        }
-    });
-    renderProducts(searchResult);
+searchElement.addEventListener('input', function(event){
+   eventHandler();
 });
+
+priceLowElement.addEventListener('input', function(event){
+    eventHandler();
+        })
+
+priceHighElement.addEventListener('input', function(event){
+eventHandler();
+
+})
+
+allStockElement.addEventListener('change', function(event){
+    eventHandler();
+})
+
+inStockElement.addEventListener('change', function(event){
+    eventHandler();
+})
+
+outOfStockElement.addEventListener('change', function(event){
+    eventHandler();
+})
 
 function renderProducts(productList) {
     var order_items = [];
@@ -75,10 +101,10 @@ function renderProducts(productList) {
         </div>   
     </div>
     <hr>
-`)
+    `)
             } else {
                 order_items.push(`
-<div class="album row">
+    <div class="album row">
     <div class="col-lg-2">
     <img width="100px" src="${productList[i].avatar}">
     </div>
@@ -88,9 +114,9 @@ function renderProducts(productList) {
     <div class="price">${productList[i].price}</div>
     <span class="badge badge-pill badge-danger">Out of Stock</span>
     </div>   
-</div>
-<hr>
-`)
+    </div>
+    <hr>
+    `)
             };
         };
         function simpleTemplating(data) {
